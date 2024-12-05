@@ -28,6 +28,12 @@ export default {
 .qy-title-row-item {
   flex-shrink: 0;
 
+  .qy-title-row-item-label {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #cccccc;
+  }
+
   .qy-title-row-item-children {
     display: flex;
     align-items: center;

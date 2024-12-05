@@ -48,7 +48,7 @@ const columnsInfoArray = [] // 储存每列信息数组
 
 // 获取文本宽度
 const getTextWidth = (text, fontSize) => {
-  const htmlElement = document.documentElement  // 获取 <html> 元素
+  const htmlElement = document.documentElement  // 获取<html>元素
   const computedStyle = window.getComputedStyle(htmlElement)  // 获取计算后的样式
   // 通过canvas获取文本宽度
   const canvas = document.createElement('canvas')
@@ -56,6 +56,24 @@ const getTextWidth = (text, fontSize) => {
   context.font = `${fontSize} ${computedStyle.fontFamily}`
   const metrics = context.measureText(text)
   return Math.ceil(metrics.width + 4) // 获取的宽度留4px边距向上取整
+}
+
+// 获取文本高度
+const getTextHeight = (text, fontSize) => {
+  const htmlElement = document.documentElement  // 获取<html>元素
+  const computedStyle = window.getComputedStyle(htmlElement)  // 获取计算后的样式
+  // 创建一个不可见的span元素
+  const span = document.createElement('span')
+  // 设置样式
+  span.style.position = 'absolute' // 不影响页面布局
+  span.style.whiteSpace = 'nowrap' // 单行显示
+  span.style.visibility = 'hidden' // 不可见
+  span.style.font = `${fontSize} ${computedStyle.fontFamily}` // 设置字体样式
+  span.textContent = text // 设置文本
+  document.body.appendChild(span) // 添加到文档中
+  const height = span.offsetHeight // 获取高度
+  document.body.removeChild(span) // 移除元素
+  return height
 }
 
 // 初始化节点
@@ -66,6 +84,7 @@ const initNode = (nodes) => {
       const { style, children, label, value } = item || {}
       const fontSize = style?.fontSize || itemStyle?.fontSize || '16px'
       let width = '0'
+      const height = style?.height || itemStyle?.height || getTextHeight(label, fontSize) * 1.5 + 'px'
       const color = style?.color || itemStyle?.color
       const background = style?.background || itemStyle?.background
       const textAlign = style?.textAlign || itemStyle?.textAlign || 'left'
@@ -80,6 +99,7 @@ const initNode = (nodes) => {
         ...style,
         fontSize,
         width,
+        height,
         color,
         background,
         textAlign,

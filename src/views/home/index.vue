@@ -42,16 +42,6 @@ const title = [
       {
         label: '电话',
         value: 'telephone',
-        children: [
-          {
-            label: '手机2',
-            value: 'phone2',
-          },
-          {
-            label: '电话2',
-            value: 'telephone2',
-          },
-        ]
       },
     ]
   },
