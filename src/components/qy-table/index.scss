@@ -1,0 +1,29 @@
+.qy-table {
+  width: 100%;
+
+  .qy-table-content {
+    width: 100%;
+
+    .qy-table-content-title {
+      width: 100%;
+
+      .qy-title-row {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    .qy-table-content-main {
+      width: 100%;
+
+      .qy-main-row {
+        display: flex;
+        align-items: center;
+
+        .qy-main-row-item {
+          flex-shrink: 0;
+        }
+      }
+    }
+  }
+}
