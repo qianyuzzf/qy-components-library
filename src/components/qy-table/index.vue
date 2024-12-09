@@ -24,6 +24,7 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { getRowItemStyle } from '@/components/qy-table/config.js'
 import RecursiveComponent from '@/components/qy-table/components/RecursiveComponent.vue'
 
@@ -42,6 +43,8 @@ const props = defineProps({
     default: () => ({}),
   },
 })
+
+const titleMaxHeight = ref('') // 表头高度
 
 const columnsInfo = {} // 储存每列信息
 const columnsInfoArray = [] // 储存每列信息数组
@@ -88,12 +91,12 @@ const initNode = (nodes) => {
       const color = style?.color || itemStyle?.color
       const background = style?.background || itemStyle?.background
       const textAlign = style?.textAlign || itemStyle?.textAlign || 'left'
-      if (!children || children.length === 0) {
+      if (children?.length > 0) {
+        initNode(children)
+      } else {
         width = style?.width || itemStyle?.width || getTextWidth(label, fontSize) + 'px' // 末节点才设置宽度
         columnsInfo[value] = item // 末节点信息存储到每列信息
         columnsInfoArray.push(item) // 末节点信息存储到每列信息数组
-      } else {
-        initNode(children)
       }
       item.style = {
         ...style,
@@ -108,8 +111,41 @@ const initNode = (nodes) => {
   }
 }
 
+// 获取节点最高高度
+const getNodeHeight = (nodes) => {
+  let maxHeight = 0
+  if (Array.isArray(nodes)) {
+    nodes.forEach(item => {
+      const { style, children } = item || {}
+      let nodeHeight = parseFloat(style?.height || '0')
+      if (children?.length > 0) {
+        nodeHeight += getNodeHeight(children)
+      }
+      maxHeight = Math.max(maxHeight, nodeHeight)
+    })
+  }
+  return maxHeight
+}
+
+// 设置节点高度
+const setNodeHeight = (nodes, currentHeight) => {
+  if (Array.isArray(nodes)) {
+    nodes.forEach(item => {
+      const { style, children } = item || {}
+      if (children?.length > 0) {
+        let nodeHeight = parseFloat(style?.height || '0')
+        setNodeHeight(children, currentHeight - nodeHeight)
+      } else {
+        style.height = currentHeight + 'px'
+      }
+    })
+  }
+}
+
 const init = () => {
   initNode(props.title)
+  titleMaxHeight.value = getNodeHeight(props.title)
+  setNodeHeight(props.title, titleMaxHeight.value)
 }
 
 init()
