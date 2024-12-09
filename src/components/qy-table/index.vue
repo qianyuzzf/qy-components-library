@@ -42,6 +42,11 @@ const props = defineProps({
     required: false,
     default: () => ({}),
   },
+  contentStyle: {
+    type: Object,
+    required: false,
+    default: () => ({}),
+  }
 })
 
 const titleMaxHeight = ref('') // 表头高度
@@ -51,7 +56,10 @@ const columnsInfoArray = [] // 储存每列信息数组
 
 // 获取内容文本样式
 const getContentRowItemStyle = (item) => {
-  const { fontSize, width, height, color, background, textAlign } = item?.style || {}
+  const { style, label } = item || {}
+  const { width, textAlign } = style || {}
+  const { color, background, fontSize = '16px' } = props.contentStyle || {}
+  const height = props.contentStyle?.height || getTextHeight(label, fontSize) * 1.5 + 'px'
   return {
     fontSize,
     width: sizeConversion(width),
