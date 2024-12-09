@@ -1,6 +1,6 @@
 <template>
   <div class="qy-title-row-item" v-for="(item, index) in data" :key="index">
-    <div class="qy-title-row-item-label" :style="getRowItemStyle(item)">{{ item?.label }}</div>
+    <div class="qy-title-row-item-label" :style="getTitleRowItemStyle(item)">{{ item?.label }}</div>
     <div class="qy-title-row-item-children" v-if="Array.isArray(item?.children) && item.children.length > 0">
       <RecursiveComponent :data="item.children"></RecursiveComponent>
     </div>
@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { getRowItemStyle } from '@/components/qy-table/config.js'
+import { textAlignToFlex, sizeConversion } from '@/components/qy-table/config.js'
 
 const props = defineProps({
   data: {
@@ -16,6 +16,19 @@ const props = defineProps({
     required: true,
   },
 })
+
+// 获取表头文本样式
+const getTitleRowItemStyle = (item) => {
+  const { fontSize, width, height, color, background, textAlign } = item?.style || {}
+  return {
+    fontSize,
+    width: sizeConversion(width),
+    height: sizeConversion(height),
+    color,
+    background,
+    justifyContent: textAlignToFlex[textAlign],
+  }
+}
 </script>
 
 <script>

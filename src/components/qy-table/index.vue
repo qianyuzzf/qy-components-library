@@ -12,7 +12,7 @@
             class="qy-main-row-item"
             v-for="(item2, index2) in columnsInfoArray"
             :key="index2"
-            :style="getRowItemStyle(item2)"
+            :style="getContentRowItemStyle(item2)"
           >
             {{ item[item2.value] }}
           </div>
@@ -25,7 +25,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { getRowItemStyle } from '@/components/qy-table/config.js'
+import { sizeConversion, textAlignToFlex } from '@/components/qy-table/config.js'
 import RecursiveComponent from '@/components/qy-table/components/RecursiveComponent.vue'
 
 const props = defineProps({
@@ -37,7 +37,7 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  itemStyle: {
+  titleStyle: {
     type: Object,
     required: false,
     default: () => ({}),
@@ -48,6 +48,19 @@ const titleMaxHeight = ref('') // 表头高度
 
 const columnsInfo = {} // 储存每列信息
 const columnsInfoArray = [] // 储存每列信息数组
+
+// 获取内容文本样式
+const getContentRowItemStyle = (item) => {
+  const { fontSize, width, height, color, background, textAlign } = item?.style || {}
+  return {
+    fontSize,
+    width: sizeConversion(width),
+    height: sizeConversion(height),
+    color,
+    background,
+    justifyContent: textAlignToFlex[textAlign],
+  }
+}
 
 // 获取文本宽度
 const getTextWidth = (text, fontSize) => {
@@ -81,20 +94,20 @@ const getTextHeight = (text, fontSize) => {
 
 // 初始化节点
 const initNode = (nodes) => {
-  const { itemStyle } = props || {}
+  const { titleStyle } = props || {}
   if (Array.isArray(nodes)) {
     nodes.forEach(item => {
       const { style, children, label, value } = item || {}
-      const fontSize = style?.fontSize || itemStyle?.fontSize || '16px'
+      const fontSize = style?.fontSize || titleStyle?.fontSize || '16px'
       let width = '0'
-      const height = style?.height || itemStyle?.height || getTextHeight(label, fontSize) * 1.5 + 'px'
-      const color = style?.color || itemStyle?.color
-      const background = style?.background || itemStyle?.background
-      const textAlign = style?.textAlign || itemStyle?.textAlign || 'left'
+      const height = style?.height || titleStyle?.height || getTextHeight(label, fontSize) * 1.5 + 'px'
+      const color = style?.color || titleStyle?.color
+      const background = style?.background || titleStyle?.background
+      const textAlign = style?.textAlign || titleStyle?.textAlign || 'left'
       if (children?.length > 0) {
         initNode(children)
       } else {
-        width = style?.width || itemStyle?.width || getTextWidth(label, fontSize) + 'px' // 末节点才设置宽度
+        width = style?.width || titleStyle?.width || getTextWidth(label, fontSize) + 'px' // 末节点才设置宽度
         columnsInfo[value] = item // 末节点信息存储到每列信息
         columnsInfoArray.push(item) // 末节点信息存储到每列信息数组
       }

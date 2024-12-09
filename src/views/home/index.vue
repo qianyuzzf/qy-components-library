@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div style="margin-top: 20px">
     <QyTable
       :title="title"
       :data="data"
-      :itemStyle="itemStyle"
+      :titleStyle="titleStyle"
     ></QyTable>
   </div>
 </template>
@@ -78,7 +78,7 @@ const data = [
   },
 ]
 
-const itemStyle = {
+const titleStyle = {
   fontSize: '14px',
   width: '200px',
   textAlign: 'center',
