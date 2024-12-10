@@ -173,5 +173,5 @@ init()
 </script>
 
 <style lang="scss">
-@use '@/components/qy-table/index.scss';
+@use '@/components/qy-table/index.scss' as *;
 </style>

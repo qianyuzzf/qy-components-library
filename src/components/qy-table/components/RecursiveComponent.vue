@@ -38,13 +38,15 @@ export default {
 </script>
 
 <style lang="scss">
+@use '@/assets/styles/constant.scss' as *;
+
 .qy-title-row-item {
   flex-shrink: 0;
 
   .qy-title-row-item-label {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #cccccc;
+    border-bottom: $border-bottom;
   }
 
   .qy-title-row-item-children {

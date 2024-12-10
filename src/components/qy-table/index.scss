@@ -1,10 +1,12 @@
+@use '@/assets/styles/constant.scss' as *;
+
 .qy-table {
   width: 100%;
 
   .qy-table-content {
     width: 100%;
     overflow-x: auto;
-    border-top: 1px solid #cccccc;
+    border-top: $border-bottom;
 
     .qy-table-content-title {
       display: inline-block;
@@ -21,7 +23,7 @@
       .qy-main-row {
         display: flex;
         align-items: center;
-        border-bottom: 1px solid #cccccc;
+        border-bottom: $border-bottom;
 
         .qy-main-row-item {
           flex-shrink: 0;
