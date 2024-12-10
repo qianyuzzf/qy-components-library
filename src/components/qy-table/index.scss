@@ -6,7 +6,7 @@
   .qy-table-content {
     width: 100%;
     overflow-x: auto;
-    border-top: $border-bottom;
+    border-top: $border-line;
 
     .qy-table-content-title {
       display: inline-block;
@@ -23,7 +23,7 @@
       .qy-main-row {
         display: flex;
         align-items: center;
-        border-bottom: $border-bottom;
+        border-bottom: $border-line;
 
         .qy-main-row-item {
           flex-shrink: 0;

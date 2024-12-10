@@ -46,7 +46,7 @@ export default {
   .qy-title-row-item-label {
     display: flex;
     align-items: center;
-    border-bottom: $border-bottom;
+    border-bottom: $border-line;
   }
 
   .qy-title-row-item-children {
