@@ -3,9 +3,11 @@
 
   .qy-table-content {
     width: 100%;
+    overflow-x: auto;
+    border-top: 1px solid #cccccc;
 
     .qy-table-content-title {
-      width: 100%;
+      display: inline-block;
 
       .qy-title-row {
         display: flex;
@@ -14,11 +16,12 @@
     }
 
     .qy-table-content-main {
-      width: 100%;
+      display: inline-block;
 
       .qy-main-row {
         display: flex;
         align-items: center;
+        border-bottom: 1px solid #cccccc;
 
         .qy-main-row-item {
           flex-shrink: 0;
