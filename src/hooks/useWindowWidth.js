@@ -1,7 +1,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import _ from 'lodash'
 
-const useWindowWidth = (debounceDelay = 300) => {
+const useWindowWidth = (debounceDelay = 200) => {
   const screenWidth = ref(window.innerWidth)
 
   const updateScreenWidth = _.debounce(() => {

@@ -210,21 +210,24 @@ const setNodeNewWidth = (array, scale) => {
 }
 
 // 表格宽度缩放
-const tableWidthScale = _.debounce((value) => {
+const tableWidthScale = (value) => {
   const currentTableWidth = getTableWidth(componentProps.value.title)
   // 表格目标宽度不能小于初始宽度
   const targetWidth = value > initTableWidth.value ? value : initTableWidth.value
   // 获取缩放系数
   const scale = _.round(targetWidth / currentTableWidth, 4)
   setNodeNewWidth(componentProps.value.title, scale)
-}, 100)
+}
+
+// 表格宽度缩放防抖
+const tableWidthScaleDebounce = _.debounce(tableWidthScale, 200)
 
 const resizeObserver = ref(null) // DOM元素监听
 // 初始化ResizeObserver
 const initResizeObserver = () => {
   resizeObserver.value = new ResizeObserver((entries) => {
     for (let entry of entries) {
-      tableWidthScale(entry.target.offsetWidth) // 更新宽度
+      tableWidthScaleDebounce(entry.target.offsetWidth) // 更新宽度
     }
   })
   if (qyTableRef.value) {
@@ -246,11 +249,11 @@ const init = () => {
   titleMaxHeight.value = getNodeHeight(componentProps.value.title)
   setNodeHeight(componentProps.value.title, titleMaxHeight.value)
   initTableWidth.value = getTableWidth(componentProps.value.title)
+  tableWidthScale(qyTableRef.value.offsetWidth)
 }
 
-init()
-
 onMounted(() => {
+  init()
   initResizeObserver()
 })
 
