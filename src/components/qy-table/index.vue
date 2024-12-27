@@ -3,11 +3,11 @@
     <div class="qy-table-content">
       <div class="qy-table-content-title">
         <div class="qy-title-row">
-          <RecursiveComponent :data="title"></RecursiveComponent>
+          <RecursiveComponent :data="componentProps.title"></RecursiveComponent>
         </div>
       </div>
       <div class="qy-table-content-main">
-        <div class="qy-main-row" v-for="(item, index) in data" :key="index">
+        <div class="qy-main-row" v-for="(item, index) in componentProps.data" :key="index">
           <div
             class="qy-main-row-item"
             v-for="(item2, index2) in columnsInfoArray"
@@ -24,7 +24,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import _ from 'lodash'
+import useWindowWidth from '@/hooks/useWindowWidth.js'
 import { sizeConversion, textAlignToFlex } from '@/components/qy-table/config.js'
 import RecursiveComponent from '@/components/qy-table/components/RecursiveComponent.vue'
 
@@ -49,17 +51,34 @@ const props = defineProps({
   }
 })
 
-const titleMaxHeight = ref('') // 表头高度
+// 组件存储接收的props
+const componentProps = ref({
+  title: [],
+  data: [],
+  titleStyle: {},
+  contentStyle: {},
+})
 
+// 把props放在组件内部
+const initComponent = () => {
+  componentProps.value.title = _.cloneDeep(props.title)
+  componentProps.value.data = _.cloneDeep(props.data)
+  componentProps.value.titleStyle = _.cloneDeep(props.titleStyle)
+  componentProps.value.contentStyle = _.cloneDeep(props.contentStyle)
+}
+
+const screenWidth = useWindowWidth() // 屏幕宽度
+const titleMaxHeight = ref('') // 表头高度
 const columnsInfo = {} // 储存每列信息
 const columnsInfoArray = [] // 储存每列信息数组
+const initTableWidth = ref(0) // 表格初始宽度
 
 // 获取内容文本样式
 const getContentRowItemStyle = (item) => {
   const { style, label } = item || {}
   const { width, textAlign } = style || {}
-  const { color, background, fontSize = '16px' } = props.contentStyle || {}
-  const height = props.contentStyle?.height || getTextHeight(label, fontSize) * 1.5 + 'px'
+  const { color, background, fontSize = '16px' } = componentProps.value?.contentStyle || {}
+  const height = componentProps.value?.contentStyle?.height || getTextHeight(label, fontSize) * 1.5 + 'px'
   return {
     fontSize,
     width: sizeConversion(width),
@@ -102,7 +121,7 @@ const getTextHeight = (text, fontSize) => {
 
 // 初始化节点
 const initNode = (nodes) => {
-  const { titleStyle } = props || {}
+  const { titleStyle } = componentProps.value || {}
   if (Array.isArray(nodes)) {
     nodes.forEach(item => {
       const { style, children, label, value } = item || {}
@@ -163,13 +182,59 @@ const setNodeHeight = (nodes, currentHeight) => {
   }
 }
 
+// 获取表格宽度
+const getTableWidth = (array) => {
+  let result = 0
+  if (Array.isArray(array)) {
+    array.forEach(item => {
+      if (item?.children) {
+        result += getTableWidth(item.children)
+      } else {
+        result += parseFloat(item.style?.width || '0')
+      }
+    })
+  }
+  return result
+}
+
+// 设置节点新宽度
+const setNodeNewWidth = (array, scale) => {
+  if (Array.isArray(array)) {
+    array.forEach(item => {
+      if (item?.children) {
+        setNodeNewWidth(item.children, scale)
+      } else {
+        item.style.width = _.round(parseFloat(item.style?.width || '0') * scale, 4) + 'px'
+      }
+    })
+  }
+}
+
+// 表格宽度缩放
+const tableWidthScale = () => {
+  const currentTableWidth = getTableWidth(componentProps.value.title)
+  // 表格目标宽度不能小于初始宽度
+  const targetWidth = screenWidth.value > initTableWidth.value ? screenWidth.value : initTableWidth.value
+  // 获取缩放系数
+  const scale = _.round(targetWidth / currentTableWidth, 4)
+  setNodeNewWidth(componentProps.value.title, scale)
+}
+
+// 初始化
 const init = () => {
-  initNode(props.title)
-  titleMaxHeight.value = getNodeHeight(props.title)
-  setNodeHeight(props.title, titleMaxHeight.value)
+  initComponent()
+  initNode(componentProps.value.title)
+  titleMaxHeight.value = getNodeHeight(componentProps.value.title)
+  setNodeHeight(componentProps.value.title, titleMaxHeight.value)
+  initTableWidth.value = getTableWidth(componentProps.value.title)
+  tableWidthScale()
 }
 
 init()
+
+watch(() => screenWidth.value, () => {
+  tableWidthScale()
+})
 </script>
 
 <style lang="scss">

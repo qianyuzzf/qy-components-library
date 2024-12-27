@@ -1,16 +1,13 @@
 @use '@/assets/styles/constant.scss' as *;
 
 .qy-table {
-  width: 100%;
+  display: inline-block;
 
   .qy-table-content {
-    width: 100%;
     overflow-x: auto;
     border-top: $border-line;
 
     .qy-table-content-title {
-      display: inline-block;
-
       .qy-title-row {
         display: flex;
         align-items: center;
@@ -18,8 +15,6 @@
     }
 
     .qy-table-content-main {
-      display: inline-block;
-
       .qy-main-row {
         display: flex;
         align-items: center;

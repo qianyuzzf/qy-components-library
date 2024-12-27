@@ -58,6 +58,7 @@ const data = [
     telephone1: '13511111111',
     phone2: '13522222222',
     telephone2: '13522222222',
+    telephone: '13533333333',
     address: '浙江省宁波市宁海县1',
   },
   {
@@ -66,6 +67,7 @@ const data = [
     telephone1: '13511111111',
     phone2: '13522222222',
     telephone2: '13522222222',
+    telephone: '13533333333',
     address: '浙江省宁波市宁海县2',
   },
   {
@@ -74,6 +76,7 @@ const data = [
     telephone1: '13511111111',
     phone2: '13522222222',
     telephone2: '13522222222',
+    telephone: '13533333333',
     address: '浙江省宁波市宁海县3',
   },
 ]
