@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 20px">
+  <div style="margin-top: 20px; width: calc(100% - 200px)">
     <QyTable
       :title="title"
       :data="data"

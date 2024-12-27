@@ -1,5 +1,5 @@
 <template>
-  <div class="qy-table">
+  <div class="qy-table" ref="qyTableRef">
     <div class="qy-table-content">
       <div class="qy-table-content-title">
         <div class="qy-title-row">
@@ -24,9 +24,8 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import _ from 'lodash'
-import useWindowWidth from '@/hooks/useWindowWidth.js'
 import { sizeConversion, textAlignToFlex } from '@/components/qy-table/config.js'
 import RecursiveComponent from '@/components/qy-table/components/RecursiveComponent.vue'
 
@@ -67,7 +66,7 @@ const initComponent = () => {
   componentProps.value.contentStyle = _.cloneDeep(props.contentStyle)
 }
 
-const screenWidth = useWindowWidth() // 屏幕宽度
+const qyTableRef = ref() // ref绑定
 const titleMaxHeight = ref('') // 表头高度
 const columnsInfo = {} // 储存每列信息
 const columnsInfoArray = [] // 储存每列信息数组
@@ -211,13 +210,33 @@ const setNodeNewWidth = (array, scale) => {
 }
 
 // 表格宽度缩放
-const tableWidthScale = () => {
+const tableWidthScale = _.debounce((value) => {
   const currentTableWidth = getTableWidth(componentProps.value.title)
   // 表格目标宽度不能小于初始宽度
-  const targetWidth = screenWidth.value > initTableWidth.value ? screenWidth.value : initTableWidth.value
+  const targetWidth = value > initTableWidth.value ? value : initTableWidth.value
   // 获取缩放系数
   const scale = _.round(targetWidth / currentTableWidth, 4)
   setNodeNewWidth(componentProps.value.title, scale)
+}, 100)
+
+const resizeObserver = ref(null) // DOM元素监听
+// 初始化ResizeObserver
+const initResizeObserver = () => {
+  resizeObserver.value = new ResizeObserver((entries) => {
+    for (let entry of entries) {
+      tableWidthScale(entry.target.offsetWidth) // 更新宽度
+    }
+  })
+  if (qyTableRef.value) {
+    resizeObserver.value.observe(qyTableRef.value) // 监听目标元素
+  }
+}
+// 清理ResizeObserver
+const destroyResizeObserver = () => {
+  if (resizeObserver.value && qyTableRef.value) {
+    resizeObserver.value.unobserve(qyTableRef.value)
+  }
+  resizeObserver.value = null
 }
 
 // 初始化
@@ -227,13 +246,16 @@ const init = () => {
   titleMaxHeight.value = getNodeHeight(componentProps.value.title)
   setNodeHeight(componentProps.value.title, titleMaxHeight.value)
   initTableWidth.value = getTableWidth(componentProps.value.title)
-  tableWidthScale()
 }
 
 init()
 
-watch(() => screenWidth.value, () => {
-  tableWidthScale()
+onMounted(() => {
+  initResizeObserver()
+})
+
+onUnmounted(() => {
+  destroyResizeObserver()
 })
 </script>
 

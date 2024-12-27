@@ -1,7 +1,7 @@
 @use '@/assets/styles/constant.scss' as *;
 
 .qy-table {
-  display: inline-block;
+  width: 100%;
 
   .qy-table-content {
     overflow-x: auto;
